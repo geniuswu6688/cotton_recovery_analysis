@@ -28,7 +28,7 @@ results/        # figures and tables
 * `average_recovery_rank.png`: recovery rate
 * `chrom_recovery_heatmap.png`: chromosome-level analysis
 * `sample_sliding_joint.png`: sliding window analysis
-* `homo_curve`×22: sliding window analysis
+* `sample_sliding_single`: sliding window analysis
 * `introgression_map.png`: introgression visualization
 
 ## Requirements
