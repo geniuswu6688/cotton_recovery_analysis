@@ -2,23 +2,17 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# =========================
-# 1️⃣ 读取数据
-# =========================
+# 读取数据
 df = pd.read_csv("samples_snp_matrix.csv", index_col=0)
 
 # 拆分染色体
 df["Chrom"] = df.index.str.split(":").str[0]
 
-# =========================
-# 2️⃣ 数值类型转换（关键！）
-# =========================
+# 数值类型转换
 num_cols = df.columns.drop("Chrom")
 df[num_cols] = df[num_cols].apply(pd.to_numeric, errors="coerce")
 
-# =========================
-# 3️⃣ 提取样品
-# =========================
+# 提取样品
 parent_name = "554"
 
 samples = [col for col in df.columns if col not in ["Chrom", parent_name]]
@@ -29,16 +23,12 @@ if samples[0].startswith("homo"):
 else:
     samples = sorted(samples, key=lambda x: int(x))
 
-# =========================
-# 4️⃣ 染色体排序（A01~D13）
-# =========================
+# 染色体排序（A01~D13）
 chroms = sorted(df["Chrom"].unique(), key=lambda x: (x[0], int(x[1:])))
 
 print("染色体数:", len(chroms))
 
-# =========================
-# 5️⃣ 计算恢复度
-# =========================
+# 计算恢复度
 result = []
 
 for chrom in chroms:
@@ -52,16 +42,14 @@ for chrom in chroms:
         score = 1 - np.abs(arr - parent_chr) / 2
         
         result.append({
-            "Sample": f"homo{i+1}",   # 👈 这里直接编号
+            "Sample": f"homo{i+1}",   # 这里直接编号
             "Chrom": chrom,
             "Recovery": np.nanmean(score)
         })
 
 rec_df = pd.DataFrame(result)
 
-# =========================
-# 6️⃣ 转矩阵（样品 × 染色体）
-# =========================
+# 转矩阵（样品 × 染色体）
 heatmap_df = rec_df.pivot(index="Sample", columns="Chrom", values="Recovery")
 
 # 👉 确保顺序 homo1 → homoN
@@ -69,16 +57,11 @@ heatmap_df = heatmap_df.reindex(
     [f"homo{i+1}" for i in range(len(samples))]
 )
 
-# =========================
-# 7️⃣ 输出数据表（论文用）
-# =========================
+# 输出数据表
 heatmap_df.to_csv("chrom_recovery_matrix.csv")
-print("✅ 输出矩阵: chrom_recovery_matrix.csv")
+print("输出矩阵: chrom_recovery_matrix.csv")
 
-# =========================
-# 8️⃣ 作图（热图）
-# =========================
-
+# 作图（热图）
 from matplotlib.colors import LinearSegmentedColormap
 
 plt.figure(figsize=(12,8))
@@ -103,4 +86,4 @@ plt.tight_layout()
 plt.savefig("chrom_recovery_heatmap.png", dpi=300)
 plt.show()
 
-print("✅ 热图输出: chrom_recovery_heatmap.png")
+print("热图输出: chrom_recovery_heatmap.png")
