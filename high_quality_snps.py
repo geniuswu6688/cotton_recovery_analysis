@@ -7,9 +7,8 @@ vcf_file = "all_samples.joint.vcf.gz"
 records = []
 samples = []
 
-# =========================
-# 1️⃣ 读取 VCF
-# =========================
+
+# 读取 VCF
 with gzip.open(vcf_file, "rt") as f:
     for line in f:
         if line.startswith("##"):
@@ -27,7 +26,7 @@ with gzip.open(vcf_file, "rt") as f:
         ref = parts[3]
         alt = parts[4]
         
-        # ✅ 只保留 SNP
+        # 只保留 SNP
         if len(ref) != 1 or len(alt) != 1 or "," in alt:
             continue
         
@@ -45,25 +44,23 @@ with gzip.open(vcf_file, "rt") as f:
 
 print("原始SNP数:", len(records))
 
-# =========================
-# 2️⃣ 设置亲本
-# =========================
+
+# 设置亲本
 parent_name = "554"
 parent_index = samples.index(parent_name)
 
-# =========================
-# 3️⃣ 过滤并保存 SNP
-# =========================
+
+# 过滤并保存 SNP
 hq_snps = []
 
 for chrom, pos, ref, alt, gts in records:
     arr = np.array(gts)
     
-    # ❌ 去缺失
+    # 去缺失
     if np.isnan(arr).any():
         continue
     
-    # ❌ 去无多态
+    # 去无多态
     if np.all(arr == arr[0]):
         continue
     
@@ -79,13 +76,12 @@ for chrom, pos, ref, alt, gts in records:
 
 print("高质量SNP数:", len(hq_snps))
 
-# =========================
-# 4️⃣ 输出文件
-# =========================
+
+# 输出文件
 df_snps = pd.DataFrame(hq_snps)
 
 df_snps = df_snps.sort_values(["Chrom", "Pos"])
 
 df_snps.to_csv("high_quality_snps.csv", index=False)
 
-print("✅ 已输出 high_quality_snps.csv")
+print("已输出 high_quality_snps.csv")
