@@ -2,7 +2,7 @@ import gzip
 import numpy as np
 import pandas as pd
 
-vcf_file = "/mnt/d/xwechat_files/wxid_am68bt68v9xe22_6430/msg/file/2026-05/神咪的毕设/all_samples.joint.vcf.gz"
+vcf_file = "all_samples.joint.vcf.gz"  #VCF数据文件地址
 
 records = []
 samples = []
