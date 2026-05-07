@@ -4,21 +4,15 @@ import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 import os
 
-# =========================
-# 1️⃣ 读取滑窗数据
-# =========================
+# 读取滑窗数据
 df = pd.read_csv("sample_sliding.csv")
 
-# =========================
-# 2️⃣ 状态定义
-# =========================
+# 状态定义
 threshold = 0.9
 
 df["State"] = np.where(df["Recovery"] >= threshold, "Parent", "Introgression")
 
-# =========================
-# 3️⃣ 排序
-# =========================
+# 排序
 samples = sorted(df["Sample"].unique(), key=lambda x: int(x.replace("homo","")))
 chroms = sorted(df["Chrom"].unique(), key=lambda x: (x[0], int(x[1:])))
 
@@ -32,9 +26,7 @@ for chrom in chroms:
     chrom_offset[chrom] = offset
     offset += max_pos
 
-# =========================
-# 4️⃣ 画图（区段图）
-# =========================
+# 画图（区段图）
 plt.figure(figsize=(14, 6))
 
 y_pos = {s: i for i, s in enumerate(samples)}
@@ -96,9 +88,7 @@ for sample in samples:
             linewidth=0.6
         )
 
-# =========================
-# 5️⃣ 坐标轴
-# =========================
+# 坐标轴
 plt.yticks(range(len(samples)), samples, fontsize=10)
 plt.gca().invert_yaxis()
 plt.xticks(xticks, xlabels, fontsize=10)
@@ -116,11 +106,9 @@ plt.legend(
     borderaxespad=0
 )
 
-# =========================
-# 6️⃣ 保存
-# =========================
+# 保存
 plt.tight_layout(rect=[0, 0, 0.85, 1])
 plt.savefig("introgression_map.png", dpi=600)
 plt.show()
 
-print("✅ 完成：introgression_map.png")
+print("完成：introgression_map.png")
