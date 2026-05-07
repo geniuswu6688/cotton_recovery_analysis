@@ -7,9 +7,8 @@ vcf_file = "all_samples.joint.vcf.gz"
 records = []
 samples = []
 
-# =========================
-# 1️⃣ 读取 VCF
-# =========================
+
+# 读取 VCF
 with gzip.open(vcf_file, "rt") as f:
     for line in f:
         if line.startswith("##"):
@@ -46,9 +45,7 @@ with gzip.open(vcf_file, "rt") as f:
 print("原始SNP数:", len(records))
 
 
-# =========================
-# 2️⃣ 过滤（关键！）
-# =========================
+# 过滤
 filtered = []
 
 for chrom, pos, gts in records:
@@ -67,9 +64,7 @@ for chrom, pos, gts in records:
 print("过滤后SNP数:", len(filtered))
 
 
-# =========================
-# 3️⃣ 构建矩阵（位点为行）
-# =========================
+# 构建矩阵（位点为行）
 site_names = []
 matrix = []
 
@@ -82,30 +77,24 @@ matrix = np.array(matrix)
 print("矩阵维度:", matrix.shape)
 
 
-# =========================
-# 4️⃣ DataFrame（样品为列）
-# =========================
+# DataFrame（样品为列）
 df = pd.DataFrame(matrix, columns=samples, index=site_names)
 
 
-# =========================
-# 5️⃣ 亲本排第一列
-# =========================
+# 亲本排第一列
 parent_name = "554"
 
 # 去掉亲本
 others = [s for s in samples if s != parent_name]
 
-# 按数字大小排序（关键！）
+# 按数字大小排序
 others = sorted(others, key=lambda x: int(x))
 
 # 重新排序列（亲本在第一列）
 new_cols = [parent_name] + others
 df = df[new_cols]
 
-# =========================
 # 重命名列
-# =========================
 new_names = {}
 
 for i, sample in enumerate(others):
@@ -113,9 +102,7 @@ for i, sample in enumerate(others):
 
 df = df.rename(columns=new_names)
 
-# =========================
-# 6️⃣ 输出
-# =========================
+# 输出
 df.to_csv("samples_snp_matrix.csv")
 
-print("✅ 输出完成")
+print("输出完成")
