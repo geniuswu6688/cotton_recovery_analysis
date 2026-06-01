@@ -3,13 +3,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-# 参数
-window_size = 1_000_000
-step_size = 500_000
+# =========================
+# 1️⃣ 参数
+# =========================
+window_size = 3_000_000
+step_size = 1_500_000
 
 input_file = "samples_snp_matrix.csv"
 
-# 读取数据
+# =========================
+# 2️⃣ 读取数据
+# =========================
 df = pd.read_csv(input_file, index_col=0)
 
 # 拆分染色体和位置
@@ -35,7 +39,9 @@ chroms = sorted(df["Chrom"].unique(), key=lambda x: (x[0], int(x[1:])))
 print("样品数:", len(samples))
 print("染色体数:", len(chroms))
 
-# 滑窗计算
+# =========================
+# 3️⃣ 滑窗计算
+# =========================
 records = []
 
 for chrom in chroms:
@@ -79,10 +85,14 @@ win_df = pd.DataFrame(records)
 
 print("窗口总数:", len(win_df))
 
-# 输出滑窗数据
+# =========================
+# 4️⃣ 输出滑窗数据
+# =========================
 win_df.to_csv("sample_sliding.csv")
 
-# 单个样品作图
+# =========================
+# 5️⃣ 单个样品作图
+# =========================
 single_dir = "sample_sliding_single"
 os.makedirs(single_dir, exist_ok=True)
 
@@ -121,9 +131,11 @@ for sample in win_df["Sample"].unique():
     plt.savefig(os.path.join(single_dir, f"{sample}_curve.png"), dpi=300)
     plt.close()
 
-print("单样品曲线完成")
+print("✅ 单样品曲线完成")
 
-# 所有样品拼图
+# =========================
+# 6️⃣ 所有样品拼图
+# =========================
 samples_list = sorted(win_df["Sample"].unique(), key=lambda x: int(x.replace("homo","")))
 
 n = len(samples_list)
@@ -168,4 +180,4 @@ plt.tight_layout(rect=[0, 0, 1, 0.98])
 plt.savefig("sample_sliding_joint.png")
 plt.show()
 
-print("拼图完成")
+print("✅ 拼图完成")
